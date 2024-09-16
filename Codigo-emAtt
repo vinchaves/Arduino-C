@@ -1,0 +1,65 @@
+#include <Servo.h>
+
+Servo servo;
+
+int pos = 0;
+int bt1 = 7;
+int bt2 = 8;
+int verde = 9;
+int vermelho = 10;
+bool abrirCancela;
+int som = 5;
+int frequencia;
+
+void setup()
+{
+  servo.attach(6);
+  pinMode(bt1, INPUT);
+  pinMode(bt2, INPUT);
+  pinMode(verde, OUTPUT);
+  pinMode(vermelho, OUTPUT);
+  pinMode(som, OUTPUT);
+  Serial.begin(9600);
+  servo.write(0);
+}
+
+void loop()
+{
+  int valorBT1 = digitalRead(bt1);
+  if(valorBT1 == HIGH){
+    abrirCancela = true;
+    if(abrirCancela){
+    	digitalWrite(vermelho,HIGH);
+    }
+    for(pos=0;pos<90;pos+=1){
+    	servo.write(pos);
+    	delay(15);
+  	}
+    if(pos==90){
+      digitalWrite(vermelho,LOW);
+      delay(20);
+      digitalWrite(verde,HIGH);
+      frequencia=440;
+      tone(som,frequencia);
+    }
+  }
+  
+  int valorBT2 = digitalRead(bt2);
+  if(valorBT2 == HIGH){
+    frequencia=0;
+      tone(som,frequencia);
+    abrirCancela = false;
+    if(abrirCancela==false){
+       digitalWrite(verde,LOW);
+	   digitalWrite(vermelho,HIGH);
+    }
+    for(pos=90;pos>0;pos-=1){
+    	servo.write(pos);
+    	delay(15);
+  	}
+  }
+  Serial.print(" Frequencia: ");
+  Serial.println(frequencia);
+  Serial.print("posicao: ");
+  Serial.print(pos);
+}
